@@ -5,9 +5,9 @@ from app.models import ServiceTicket
 
 
 class ServiceTicketSchema(ma.SQLAlchemyAutoSchema):
-    mechanics = fields.Nested("MechanicSchema", many=True, exclude=("tickets",))
+    mechanics = fields.Nested("MechanicSchema", many=True)
 
-    parts = fields.Nested("InventorySchema", many=True, exclude=("tickets",))
+    parts = fields.Nested("InventorySchema", many=True)
 
     class Meta:
         model = ServiceTicket
