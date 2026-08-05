@@ -33,6 +33,7 @@ Before running this project, ensure you have the following installed:
 **1\. Clone the repository**
 
 git clone https://github.com/rkoss-dev/autoshop-api-V2.git
+
 cd mechanic-shop-api
 
 **2\. Create a virtual environment with uv**
