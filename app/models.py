@@ -37,15 +37,12 @@ class Mechanic(db.Model):
 class ServiceTicket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     VIN = db.Column(db.String(50), nullable=False)
-    service_date = db.Column(db.String(50))
+    service_date = db.Column(db.Date)
     service_description = db.Column(db.String(200))
-
     customer_id = db.Column(db.Integer, db.ForeignKey("customer.id"), nullable=False)
-
     mechanics = db.relationship(
         "Mechanic", secondary=ticket_mechanic, backref="tickets"
     )
-
     parts = db.relationship("Inventory", secondary=ticket_inventory, backref="tickets")
 
 

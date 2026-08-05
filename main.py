@@ -1,7 +1,9 @@
+import os
+
 from app import create_app
 
 app = create_app()
 
 if __name__ == "__main__":
-    # debug=True allows the server to automatically restart when you save a file
-    app.run(debug=True)
+    debug_mode = os.environ.get("FLASK_DEBUG", "False").lower() in ("true", "1", "t")
+    app.run(debug=debug_mode)

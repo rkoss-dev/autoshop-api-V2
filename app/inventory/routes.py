@@ -2,13 +2,15 @@ from flask import jsonify, request
 
 from app.extensions import db
 from app.models import Inventory
+from app.utils.util import token_required
 
 from . import inventory_bp
 from .schemas import inventories_schema, inventory_schema
 
 
 @inventory_bp.route("/", methods=["POST"])
-def create_part():
+@token_required
+def create_part(customer_id):
     try:
         new_part = inventory_schema.load(request.json)
         db.session.add(new_part)
@@ -20,12 +22,18 @@ def create_part():
 
 @inventory_bp.route("/", methods=["GET"])
 def get_parts():
-    parts = Inventory.query.all()
-    return inventories_schema.jsonify(parts), 200
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+
+    paginated_parts = Inventory.query.paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+    return inventories_schema.jsonify(paginated_parts.items), 200
 
 
-@inventory_bp.route("/", methods=["PUT"])
-def update_part(id):
+@inventory_bp.route("/<int:id>", methods=["PUT"])
+@token_required
+def update_part(customer_id, id):
     part = Inventory.query.get_or_404(id)
     try:
         inventory_schema.load(request.json, instance=part, partial=True)
@@ -35,8 +43,9 @@ def update_part(id):
         return jsonify({"message": str(e)}), 400
 
 
-@inventory_bp.route("/", methods=["DELETE"])
-def delete_part(id):
+@inventory_bp.route("/<int:id>", methods=["DELETE"])
+@token_required
+def delete_part(customer_id, id):
     part = Inventory.query.get_or_404(id)
     db.session.delete(part)
     db.session.commit()
